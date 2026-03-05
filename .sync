@@ -1,0 +1,28 @@
+#!/bin/bash
+
+TOKEN=$(cat ~/.github_token)
+REMOTE="https://tobirolinew:${TOKEN}@github.com/tobirolinew/FDPACK.git"
+BRANCH="main"
+
+case "$1" in
+    init)
+        git init
+        git remote add origin $REMOTE 2>/dev/null || \
+            git remote set-url origin $REMOTE
+        git branch -M $BRANCH
+        git add .
+        git commit -m "${2:-commit}"
+        git push -u origin $BRANCH
+        ;;
+    push)
+        git add .
+        git diff --cached --quiet || git commit -m "${2:-commit}"
+        git push origin $BRANCH
+        ;;
+    pull)
+        git pull origin $BRANCH
+        ;;
+    *)
+        echo "usage: $0 init|push [message]|pull"
+        ;;
+esac
